@@ -1,0 +1,12 @@
+Flask==2.1.0
+SQLAlchemy==2.0.17
+PyMySQL==1.1.0
+gunicorn==20.1.0
+cloud-sql-python-connector==1.2.4
+functions-framework==3.3.0
+Werkzeug==2.2.0
+grpcio==1.60.0
+google==3.0.0
+uuid==1.30
+firestore==0.0.8
+google-cloud-firestore==2.13.1
