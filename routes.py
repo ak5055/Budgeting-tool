@@ -26,7 +26,8 @@ def get_itenary_cost():
 
     total_budget = 0
     for t in types:
-        total_budget += calculate_budget(t, base_currency, discount, itenary_info[t])
+        if t in itenary_info:
+            total_budget += calculate_budget(t, base_currency, discount, itenary_info[t])
 
     return {"budget_price": total_budget, "budget_currency": base_currency}
 
