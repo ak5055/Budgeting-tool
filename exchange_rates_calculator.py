@@ -35,13 +35,17 @@ class ExchangeRatesService:
         '''
         return (self.fallback_exchange_rates[base_currency] / self.fallback_exchange_rates[from_currency]) * amount
 
-    def get_exchange_rate(self, base_currency: str, from_currency: str, amount: float) -> float:
+    def get_exchange_rate(self, tag, base_currency: str, from_currency: str, amount: float) -> float:
         try:
-            return self.get_exchange_rate_from_api(base_currency, from_currency, amount)
+            base_currency_amount = self.get_exchange_rate_from_api(base_currency, from_currency, amount)
+            print(f"{tag} (Sync) {amount} {from_currency} = {base_currency_amount} {base_currency}")
+            return base_currency_amount
         except Exception as e:
             warnings.warn(f"The exchange rates api failed because of the following exception: {e}. "
                           f"Falling back to getting exchange rates from static file instead.")
-            return self.get_fallback_exchange_rate(base_currency, from_currency, amount)
+            base_currency_amount = self.get_fallback_exchange_rate(base_currency, from_currency, amount)
+            print(f"{tag} (Fallback Sync) {amount} {from_currency} = {base_currency_amount} {base_currency}")
+            return base_currency_amount
 
 class ExchangeRatesServiceAsync:
     def __init__(self):
@@ -72,14 +76,14 @@ class ExchangeRatesServiceAsync:
         '''
         return (self.fallback_exchange_rates[base_currency] / self.fallback_exchange_rates[from_currency]) * amount
 
-    async def get_exchange_rate(self, session, base_currency: str, from_currency: str, amount: float) -> float:
+    async def get_exchange_rate(self, tag, session, base_currency: str, from_currency: str, amount: float) -> float:
         try:
             base_currency_amount = await asyncio.ensure_future(self.get_exchange_rate_from_api(session, base_currency, from_currency, amount))
-            print(f"{amount} {from_currency} = {base_currency_amount} {base_currency}")
+            print(f"{tag} (Async) {amount} {from_currency} = {base_currency_amount} {base_currency}")
             return base_currency_amount
         except Exception as e:
             warnings.warn(f"The exchange rates api failed because of the following exception: {e}. "
                           f"Falling back to getting exchange rates from static file instead.")
             base_currency_amount = self.get_fallback_exchange_rate(base_currency, from_currency, amount)
-            print(f"Fallback: {amount} {from_currency} = {base_currency_amount} {base_currency}")
+            print(f"{tag} (Fallback Async) {amount} {from_currency} = {base_currency_amount} {base_currency}")
             return base_currency_amount
