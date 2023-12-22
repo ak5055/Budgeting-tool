@@ -63,8 +63,8 @@ def calculate_tourism_budget_sync(base_currency: str, data: list):
         try:
             tag = f"Tourism Query {i}: "
             price_obj = tourism["price"]
-            from_curr = price_obj["currencyCode"]
-            amount = float(price_obj["amount"])
+            from_curr = price_obj.get("currencyCode", "USD")
+            amount = float(price_obj.get("amount", 0))
             budgets.append(exchange_rates_service.get_exchange_rate(tag, base_currency, from_curr, amount))
         except Exception as e:
             print(e)
@@ -134,8 +134,8 @@ async def calculate_tourism_budget_async(base_currency: str, data: list):
         for i, tourism in enumerate(data):
             tag = f"Tourism Query {i}: "
             price_obj = tourism["price"]
-            from_curr = price_obj["currencyCode"]
-            amount = float(price_obj["amount"])
+            from_curr = price_obj.get("currencyCode", "USD")
+            amount = float(price_obj.get("amount", 0))
             tasks.append(asyncio.ensure_future(exchange_rates_service_async.get_exchange_rate(tag, session, base_currency, from_curr, amount)))
 
         budgets = await asyncio.gather(*tasks)
